@@ -1,18 +1,16 @@
 {
-    "php": {
-        "extensions": [
-            "gd",
-            "pdo",
-            "pdo_mysql",
-            "mbstring",
-            "xml",
-            "zip",
-            "bcmath",
-            "tokenizer",
-            "ctype",
-            "fileinfo",
-            "json",
-            "openssl"
-        ]
-    }
+    "phpExtensions": [
+        "gd",
+        "pdo",
+        "pdo_mysql",
+        "mbstring",
+        "xml",
+        "zip",
+        "bcmath",
+        "tokenizer",
+        "ctype",
+        "fileinfo",
+        "json",
+        "openssl"
+    ]
 }

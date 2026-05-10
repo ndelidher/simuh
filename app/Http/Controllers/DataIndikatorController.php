@@ -169,8 +169,9 @@ class DataIndikatorController extends Controller
             ->orderBy('nama')
             ->get();
 
+        $masjidList = $masjids; // alias untuk kompatibilitas view
         $indikators = Indikator::where('aktif', true)->orderBy('urutan')->get();
 
-        return view('indikator.rekap', compact('masjids', 'indikators', 'tahun'));
+        return view('indikator.rekap', compact('masjids', 'masjidList', 'indikators', 'tahun'));
     }
 }

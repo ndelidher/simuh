@@ -38,12 +38,40 @@ Route::middleware(['auth'])->group(function () {
 
     // ── Wilayah ───────────────────────────────────────────────────
     Route::prefix('wilayah')->name('wilayah.')->group(function () {
-        Route::get('/pwm',    [WilayahController::class, 'pwm'])->name('pwm');
-        Route::get('/pdm',    [WilayahController::class, 'pdm'])->name('pdm');
-        Route::get('/pcm',    [WilayahController::class, 'pcm'])->name('pcm');
-        Route::get('/prm',    [WilayahController::class, 'prm'])->name('prm');
-        Route::get('/import', [WilayahController::class, 'importForm'])->name('import');
-        Route::post('/import',[WilayahController::class, 'importProses'])->name('import.proses');
+        Route::get('/pwm',              [WilayahController::class, 'pwm'])->name('pwm');
+        Route::get('/pdm',              [WilayahController::class, 'pdm'])->name('pdm');
+        Route::get('/pcm',              [WilayahController::class, 'pcm'])->name('pcm');
+        Route::get('/prm',              [WilayahController::class, 'prm'])->name('prm');
+        Route::get('/import',           [WilayahController::class, 'importForm'])->name('import');
+        Route::post('/import',          [WilayahController::class, 'importProses'])->name('import.proses');
+
+        // PWM CRUD
+        Route::get('/pwm/tambah',       [WilayahController::class, 'pwmCreate'])->name('pwm.create');
+        Route::post('/pwm',             [WilayahController::class, 'pwmStore'])->name('pwm.store');
+        Route::get('/pwm/{pwm}/edit',   [WilayahController::class, 'pwmEdit'])->name('pwm.edit');
+        Route::put('/pwm/{pwm}',        [WilayahController::class, 'pwmUpdate'])->name('pwm.update');
+        Route::delete('/pwm/{pwm}',     [WilayahController::class, 'pwmDestroy'])->name('pwm.destroy');
+
+        // PDM CRUD
+        Route::get('/pdm/tambah',       [WilayahController::class, 'pdmCreate'])->name('pdm.create');
+        Route::post('/pdm',             [WilayahController::class, 'pdmStore'])->name('pdm.store');
+        Route::get('/pdm/{pdm}/edit',   [WilayahController::class, 'pdmEdit'])->name('pdm.edit');
+        Route::put('/pdm/{pdm}',        [WilayahController::class, 'pdmUpdate'])->name('pdm.update');
+        Route::delete('/pdm/{pdm}',     [WilayahController::class, 'pdmDestroy'])->name('pdm.destroy');
+
+        // PCM CRUD
+        Route::get('/pcm/tambah',       [WilayahController::class, 'pcmCreate'])->name('pcm.create');
+        Route::post('/pcm',             [WilayahController::class, 'pcmStore'])->name('pcm.store');
+        Route::get('/pcm/{pcm}/edit',   [WilayahController::class, 'pcmEdit'])->name('pcm.edit');
+        Route::put('/pcm/{pcm}',        [WilayahController::class, 'pcmUpdate'])->name('pcm.update');
+        Route::delete('/pcm/{pcm}',     [WilayahController::class, 'pcmDestroy'])->name('pcm.destroy');
+
+        // PRM CRUD
+        Route::get('/prm/tambah',       [WilayahController::class, 'prmCreate'])->name('prm.create');
+        Route::post('/prm',             [WilayahController::class, 'prmStore'])->name('prm.store');
+        Route::get('/prm/{prm}/edit',   [WilayahController::class, 'prmEdit'])->name('prm.edit');
+        Route::put('/prm/{prm}',        [WilayahController::class, 'prmUpdate'])->name('prm.update');
+        Route::delete('/prm/{prm}',     [WilayahController::class, 'prmDestroy'])->name('prm.destroy');
     });
 
     // ── Masjid ────────────────────────────────────────────────────

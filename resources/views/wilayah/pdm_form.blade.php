@@ -1,0 +1,59 @@
+@extends('layouts.app')
+@section('title', ($mode=='create'?'Tambah':'Edit') . ' PDM')
+@section('content')
+
+<div style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#718096;margin-bottom:10px;">
+        <a href="{{ route('wilayah.pdm') }}" style="color:#3B6D11;text-decoration:none;">Data PDM</a>
+        <span>›</span>
+        <span>{{ $mode=='create' ? 'Tambah' : 'Edit' }} PDM</span>
+    </div>
+    <h1 style="font-size:20px;font-weight:500;">{{ $mode=='create' ? 'Tambah' : 'Edit' }} PDM</h1>
+</div>
+
+<form method="POST" action="{{ $mode=='create' ? route('wilayah.pdm.store') : route('wilayah.pdm.update', $data) }}">
+@csrf
+@if($mode=='edit') @method('PUT') @endif
+
+<div style="background:#fff;border:0.5px solid #dde8d5;border-radius:12px;padding:20px;margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div style="grid-column:span 2;">
+            <label style="font-size:12px;color:#718096;display:block;margin-bottom:4px;">PWM (Wilayah) <span style="color:red;">*</span></label>
+            <select name="pwm_id" style="width:100%;height:36px;border:0.5px solid #ccc;border-radius:8px;padding:0 8px;font-size:13px;">
+                <option value="">-- Pilih PWM --</option>
+                @foreach($pwmList as $p)
+                <option value="{{ $p->id }}" {{ old('pwm_id', $data->pwm_id ?? '') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                @endforeach
+            </select>
+            @error('pwm_id')<span style="font-size:11px;color:red;">{{ $message }}</span>@enderror
+        </div>
+        <div>
+            <label style="font-size:12px;color:#718096;display:block;margin-bottom:4px;">Kode PDM <span style="color:red;">*</span></label>
+            <input type="text" name="kode" value="{{ old('kode', $data->kode ?? '') }}" required
+                style="width:100%;height:36px;border:0.5px solid #ccc;border-radius:8px;padding:0 10px;font-size:13px;">
+            @error('kode')<span style="font-size:11px;color:red;">{{ $message }}</span>@enderror
+        </div>
+        <div>
+            <label style="font-size:12px;color:#718096;display:block;margin-bottom:4px;">Nama PDM <span style="color:red;">*</span></label>
+            <input type="text" name="nama" value="{{ old('nama', $data->nama ?? '') }}" required
+                style="width:100%;height:36px;border:0.5px solid #ccc;border-radius:8px;padding:0 10px;font-size:13px;">
+            @error('nama')<span style="font-size:11px;color:red;">{{ $message }}</span>@enderror
+        </div>
+        <div>
+            <label style="font-size:12px;color:#718096;display:block;margin-bottom:8px;">Status</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" name="aktif" id="aktif" value="1" {{ old('aktif', $data->aktif ?? true) ? 'checked' : '' }} style="width:16px;height:16px;">
+                <label for="aktif" style="font-size:13px;">Aktif</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:flex;gap:10px;">
+    <button type="submit" style="background:#1C4A2A;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;">
+        💾 {{ $mode=='create' ? 'Simpan' : 'Perbarui' }}
+    </button>
+    <a href="{{ route('wilayah.pdm') }}" style="border:0.5px solid #ccc;background:transparent;border-radius:8px;padding:10px 20px;font-size:14px;color:#718096;text-decoration:none;">Batal</a>
+</div>
+</form>
+@endsection

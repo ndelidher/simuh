@@ -1,43 +1,42 @@
-@extends('layouts.app')
-@section('title', 'Data PRM')
+<?php $__env->startSection('title', 'Data PRM'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
     <div>
         <h1 style="font-size:20px;font-weight:500;margin-bottom:4px;">Data PRM</h1>
-        <p style="font-size:13px;color:#718096;">Pimpinan Ranting Muhammadiyah · {{ $data->total() }} ranting</p>
+        <p style="font-size:13px;color:#718096;">Pimpinan Ranting Muhammadiyah · <?php echo e($data->total()); ?> ranting</p>
     </div>
     <div style="display:flex;gap:8px;">
-        <a href="{{ route('wilayah.prm.create') }}"
+        <a href="<?php echo e(route('wilayah.prm.create')); ?>"
             style="background:#1C4A2A;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;text-decoration:none;">
             + Tambah PRM
         </a>
-        <a href="{{ route('wilayah.import') }}"
+        <a href="<?php echo e(route('wilayah.import')); ?>"
             style="border:0.5px solid #ccc;background:#fff;border-radius:8px;padding:8px 16px;font-size:13px;color:#718096;text-decoration:none;">
             ⬆ Import Excel
         </a>
     </div>
 </div>
 
-{{-- Filter --}}
-<form method="GET" action="{{ route('wilayah.prm') }}">
+
+<form method="GET" action="<?php echo e(route('wilayah.prm')); ?>">
 <div style="background:#fff;border:0.5px solid #dde8d5;border-radius:12px;padding:12px 16px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;">
     <div style="display:flex;flex-direction:column;gap:3px;">
         <label style="font-size:11px;color:#718096;">Cari</label>
-        <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Nama ranting..."
+        <input type="text" name="cari" value="<?php echo e(request('cari')); ?>" placeholder="Nama ranting..."
             style="height:32px;border:0.5px solid #ccc;border-radius:8px;padding:0 10px;font-size:13px;width:160px;">
     </div>
     <div style="display:flex;flex-direction:column;gap:3px;">
         <label style="font-size:11px;color:#718096;">Filter PCM</label>
         <select name="pcm_id" style="height:32px;border:0.5px solid #ccc;border-radius:8px;padding:0 8px;font-size:13px;width:180px;">
             <option value="">Semua PCM</option>
-            @foreach($pcmList as $p)
-            <option value="{{ $p->id }}" {{ request('pcm_id')==$p->id?'selected':'' }}>{{ $p->nama }}</option>
-            @endforeach
+            <?php $__currentLoopData = $pcmList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option value="<?php echo e($p->id); ?>" <?php echo e(request('pcm_id')==$p->id?'selected':''); ?>><?php echo e($p->nama); ?></option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </select>
     </div>
     <button type="submit" style="background:#1C4A2A;color:#fff;border:none;border-radius:8px;padding:0 16px;height:32px;font-size:13px;cursor:pointer;">Filter</button>
-    <a href="{{ route('wilayah.prm') }}" style="border:0.5px solid #ccc;background:transparent;border-radius:8px;padding:0 12px;height:32px;font-size:13px;color:#718096;text-decoration:none;display:flex;align-items:center;">Reset</a>
+    <a href="<?php echo e(route('wilayah.prm')); ?>" style="border:0.5px solid #ccc;background:transparent;border-radius:8px;padding:0 12px;height:32px;font-size:13px;color:#718096;text-decoration:none;display:flex;align-items:center;">Reset</a>
 </div>
 </form>
 
@@ -55,40 +54,42 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($data as $i => $row)
+            <?php $__empty_1 = true; $__currentLoopData = $data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
             <tr style="border-bottom:0.5px solid #f0f4ec;">
-                <td style="padding:9px 12px;font-size:12px;color:#718096;">{{ $data->firstItem() + $i }}</td>
-                <td style="padding:9px 12px;font-size:13px;font-weight:500;">{{ $row->nama }}</td>
-                <td style="padding:9px 12px;font-size:12px;color:#718096;">{{ $row->kode }}</td>
-                <td style="padding:9px 12px;font-size:12px;color:#718096;">{{ $row->pcm->nama ?? '—' }}</td>
-                <td style="padding:9px 12px;font-size:12px;color:#718096;">{{ $row->pcm->pdm->nama ?? '—' }}</td>
+                <td style="padding:9px 12px;font-size:12px;color:#718096;"><?php echo e($data->firstItem() + $i); ?></td>
+                <td style="padding:9px 12px;font-size:13px;font-weight:500;"><?php echo e($row->nama); ?></td>
+                <td style="padding:9px 12px;font-size:12px;color:#718096;"><?php echo e($row->kode); ?></td>
+                <td style="padding:9px 12px;font-size:12px;color:#718096;"><?php echo e($row->pcm->nama ?? '—'); ?></td>
+                <td style="padding:9px 12px;font-size:12px;color:#718096;"><?php echo e($row->pcm->pdm->nama ?? '—'); ?></td>
                 <td style="padding:9px 12px;text-align:center;">
-                    @if($row->aktif)
+                    <?php if($row->aktif): ?>
                         <span style="background:#EAF3DE;color:#27500A;font-size:10px;padding:2px 8px;border-radius:20px;">Aktif</span>
-                    @else
+                    <?php else: ?>
                         <span style="background:#F7C1C1;color:#791F1F;font-size:10px;padding:2px 8px;border-radius:20px;">Non-aktif</span>
-                    @endif
+                    <?php endif; ?>
                 </td>
                 <td style="padding:9px 12px;text-align:center;">
                     <div style="display:flex;gap:4px;justify-content:center;">
-                        <a href="{{ route('wilayah.prm.edit', $row) }}"
+                        <a href="<?php echo e(route('wilayah.prm.edit', $row)); ?>"
                             style="width:26px;height:26px;border:0.5px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#718096;text-decoration:none;font-size:13px;">✎</a>
-                        <form method="POST" action="{{ route('wilayah.prm.destroy', $row) }}" onsubmit="return confirm('Hapus PRM {{ addslashes($row->nama) }}?')">
-                            @csrf @method('DELETE')
+                        <form method="POST" action="<?php echo e(route('wilayah.prm.destroy', $row)); ?>" onsubmit="return confirm('Hapus PRM <?php echo e(addslashes($row->nama)); ?>?')">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                             <button type="submit" style="width:26px;height:26px;border:0.5px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#A32D2D;background:transparent;cursor:pointer;font-size:13px;">🗑</button>
                         </form>
                     </div>
                 </td>
             </tr>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
             <tr>
                 <td colspan="7" style="padding:40px;text-align:center;color:#718096;font-size:13px;">Belum ada data PRM.</td>
             </tr>
-            @endforelse
+            <?php endif; ?>
         </tbody>
     </table>
     <div style="padding:10px 16px;border-top:0.5px solid #dde8d5;font-size:12px;color:#718096;">
-        {{ $data->withQueryString()->links() }}
+        <?php echo e($data->withQueryString()->links()); ?>
+
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\simuh\resources\views/wilayah/prm.blade.php ENDPATH**/ ?>

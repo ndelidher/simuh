@@ -28,27 +28,44 @@ class MasjidController extends Controller
             $query->where('kategori_unggulan', $request->kategori);
         }
 
-        // Filter wilayah (tersedia sesuai level)
-        if ($request->filled('pwm_id') && $user->hasFullNationalAccess()) {
+        // Filter status
+        if ($request->filled('aktif')) {
+            $query->where('aktif', $request->aktif);
+        }
+
+        // Filter wilayah cascading
+        if ($request->filled('prm_id')) {
+            $query->where('prm_id', $request->prm_id);
+        } elseif ($request->filled('pcm_id')) {
+            $query->whereHas('prm', fn($q) => $q->where('pcm_id', $request->pcm_id));
+        } elseif ($request->filled('pdm_id')) {
+            $query->whereHas('prm.pcm', fn($q) => $q->where('pdm_id', $request->pdm_id));
+        } elseif ($request->filled('pwm_id')) {
             $query->whereHas('prm.pcm.pdm', fn($q) => $q->where('pwm_id', $request->pwm_id));
         }
-        if ($request->filled('pdm_id') && in_array($user->role, ['super_admin','admin_pp','admin_pwm'])) {
-            $query->whereHas('prm.pcm', fn($q) => $q->where('pdm_id', $request->pdm_id));
-        }
-        if ($request->filled('pcm_id') && in_array($user->role, ['super_admin','admin_pp','admin_pwm','admin_pdm'])) {
-            $query->whereHas('prm', fn($q) => $q->where('pcm_id', $request->pcm_id));
-        }
-        if ($request->filled('prm_id') && !in_array($user->role, ['admin_prm','admin_masjid'])) {
-            $query->where('prm_id', $request->prm_id);
+
+        $masjid = $query->orderBy('nama')->paginate(20)->withQueryString();
+
+        // Data untuk filter wilayah (superadmin/admin_pp)
+        $pwmList = collect();
+        $pdmList = collect();
+        $pcmList = collect();
+        $prmList = collect();
+
+        if ($user->isSuperAdmin() || $user->isAdminPP()) {
+            $pwmList = \App\Models\Pwm::orderBy('nama')->get(['id','nama']);
+            if ($request->filled('pwm_id')) {
+                $pdmList = \App\Models\Pdm::where('pwm_id', $request->pwm_id)->orderBy('nama')->get(['id','nama']);
+            }
+            if ($request->filled('pdm_id')) {
+                $pcmList = \App\Models\Pcm::where('pdm_id', $request->pdm_id)->orderBy('nama')->get(['id','nama']);
+            }
+            if ($request->filled('pcm_id')) {
+                $prmList = \App\Models\Prm::where('pcm_id', $request->pcm_id)->orderBy('nama')->get(['id','nama']);
+            }
         }
 
-        $masjid  = $query->orderBy('nama')->paginate(20)->withQueryString();
-        $pwmList = $user->hasFullNationalAccess() ? Pwm::where('aktif', true)->orderBy('nama')->get() : collect();
-        $pdmList = in_array($user->role, ['super_admin','admin_pp','admin_pwm'])
-            ? Pdm::where('aktif', true)->when($user->pwm_id, fn($q) => $q->where('pwm_id', $user->pwm_id))->orderBy('nama')->get()
-            : collect();
-
-        return view('masjid.index', compact('masjid', 'pwmList', 'pdmList', 'user'));
+        return view('masjid.index', compact('masjid', 'pwmList', 'pdmList', 'pcmList', 'prmList', 'user'));
     }
 
     public function create()

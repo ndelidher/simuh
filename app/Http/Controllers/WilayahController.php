@@ -160,4 +160,109 @@ class WilayahController extends Controller
 
         return redirect()->route('wilayah.prm')->with('success', $pesan);
     }
+
+    // ── PWM CRUD ──────────────────────────────────────────────────
+    public function pwmCreate() {
+        return view('wilayah.pwm_form', ['mode'=>'create','data'=>null]);
+    }
+    public function pwmStore(Request $request) {
+        $data = $request->validate(['kode'=>'required|string|max:20|unique:pwm,kode','nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        \App\Models\Pwm::create($data);
+        return redirect()->route('wilayah.pwm')->with('success','Data PWM berhasil ditambahkan.');
+    }
+    public function pwmEdit(\App\Models\Pwm $pwm) {
+        return view('wilayah.pwm_form', ['mode'=>'edit','data'=>$pwm]);
+    }
+    public function pwmUpdate(Request $request, \App\Models\Pwm $pwm) {
+        $data = $request->validate(['kode'=>'required|string|max:20|unique:pwm,kode,'.$pwm->id,'nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        $pwm->update($data);
+        return redirect()->route('wilayah.pwm')->with('success','Data PWM berhasil diperbarui.');
+    }
+    public function pwmDestroy(\App\Models\Pwm $pwm) {
+        $pwm->delete();
+        return redirect()->route('wilayah.pwm')->with('success','Data PWM berhasil dihapus.');
+    }
+
+    // ── PDM CRUD ──────────────────────────────────────────────────
+    public function pdmCreate() {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.pdm_form', ['mode'=>'create','data'=>null,'pwmList'=>$pwmList]);
+    }
+    public function pdmStore(Request $request) {
+        $data = $request->validate(['pwm_id'=>'required|exists:pwm,id','kode'=>'required|string|max:20|unique:pdm,kode','nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        \App\Models\Pdm::create($data);
+        return redirect()->route('wilayah.pdm')->with('success','Data PDM berhasil ditambahkan.');
+    }
+    public function pdmEdit(\App\Models\Pdm $pdm) {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.pdm_form', ['mode'=>'edit','data'=>$pdm,'pwmList'=>$pwmList]);
+    }
+    public function pdmUpdate(Request $request, \App\Models\Pdm $pdm) {
+        $data = $request->validate(['pwm_id'=>'required|exists:pwm,id','kode'=>'required|string|max:20|unique:pdm,kode,'.$pdm->id,'nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        $pdm->update($data);
+        return redirect()->route('wilayah.pdm')->with('success','Data PDM berhasil diperbarui.');
+    }
+    public function pdmDestroy(\App\Models\Pdm $pdm) {
+        $pdm->delete();
+        return redirect()->route('wilayah.pdm')->with('success','Data PDM berhasil dihapus.');
+    }
+
+    // ── PCM CRUD ──────────────────────────────────────────────────
+    public function pcmCreate() {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.pcm_form', ['mode'=>'create','data'=>null,'pwmList'=>$pwmList,'pdmList'=>collect()]);
+    }
+    public function pcmStore(Request $request) {
+        $data = $request->validate(['pdm_id'=>'required|exists:pdm,id','kode'=>'required|string|max:20|unique:pcm,kode','nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        \App\Models\Pcm::create($data);
+        return redirect()->route('wilayah.pcm')->with('success','Data PCM berhasil ditambahkan.');
+    }
+    public function pcmEdit(\App\Models\Pcm $pcm) {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        $pdmList = \App\Models\Pdm::where('pwm_id',$pcm->pdm->pwm_id)->where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.pcm_form', ['mode'=>'edit','data'=>$pcm,'pwmList'=>$pwmList,'pdmList'=>$pdmList]);
+    }
+    public function pcmUpdate(Request $request, \App\Models\Pcm $pcm) {
+        $data = $request->validate(['pdm_id'=>'required|exists:pdm,id','kode'=>'required|string|max:20|unique:pcm,kode,'.$pcm->id,'nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        $pcm->update($data);
+        return redirect()->route('wilayah.pcm')->with('success','Data PCM berhasil diperbarui.');
+    }
+    public function pcmDestroy(\App\Models\Pcm $pcm) {
+        $pcm->delete();
+        return redirect()->route('wilayah.pcm')->with('success','Data PCM berhasil dihapus.');
+    }
+
+    // ── PRM CRUD ──────────────────────────────────────────────────
+    public function prmCreate() {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.prm_form', ['mode'=>'create','data'=>null,'pwmList'=>$pwmList,'pdmList'=>collect(),'pcmList'=>collect()]);
+    }
+    public function prmStore(Request $request) {
+        $data = $request->validate(['pcm_id'=>'required|exists:pcm,id','kode'=>'required|string|max:20|unique:prm,kode','nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        \App\Models\Prm::create($data);
+        return redirect()->route('wilayah.prm')->with('success','Data PRM berhasil ditambahkan.');
+    }
+    public function prmEdit(\App\Models\Prm $prm) {
+        $pwmList = \App\Models\Pwm::where('aktif',true)->orderBy('nama')->get();
+        $pdmList = \App\Models\Pdm::where('pwm_id',$prm->pcm->pdm->pwm_id)->where('aktif',true)->orderBy('nama')->get();
+        $pcmList = \App\Models\Pcm::where('pdm_id',$prm->pcm->pdm_id)->where('aktif',true)->orderBy('nama')->get();
+        return view('wilayah.prm_form', ['mode'=>'edit','data'=>$prm,'pwmList'=>$pwmList,'pdmList'=>$pdmList,'pcmList'=>$pcmList]);
+    }
+    public function prmUpdate(Request $request, \App\Models\Prm $prm) {
+        $data = $request->validate(['pcm_id'=>'required|exists:pcm,id','kode'=>'required|string|max:20|unique:prm,kode,'.$prm->id,'nama'=>'required|string|max:150','aktif'=>'boolean']);
+        $data['aktif'] = $request->boolean('aktif', true);
+        $prm->update($data);
+        return redirect()->route('wilayah.prm')->with('success','Data PRM berhasil diperbarui.');
+    }
+    public function prmDestroy(\App\Models\Prm $prm) {
+        $prm->delete();
+        return redirect()->route('wilayah.prm')->with('success','Data PRM berhasil dihapus.');
+    }
 }
